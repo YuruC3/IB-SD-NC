@@ -1,2 +1,4 @@
 # mysql-connector-python==9.2.0
 netflow==0.12.2
+sqlmodel==0.0.24
+# socket
