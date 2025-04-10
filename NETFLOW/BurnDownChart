@@ -3,7 +3,7 @@ Ta emot netflow data från switch.
 Lyssna på port xxxx 
 Sätta listening IP address
 
-skicka data till databasen / SQL
+skicka data till databasen / SQLModel
 
 Skicka netflow data vidare till SDN skript
 
