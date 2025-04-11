@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import socket
 import requests
 import netflow
@@ -116,3 +117,6 @@ def start_netflow_listener():
 
 if __name__ == '__main__':
     start_netflow_listener()
+=======
+1233
+>>>>>>> 0aa039479d9ed3ec16aa1801915aa36397065a49
