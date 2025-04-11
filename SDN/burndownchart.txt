@@ -1,0 +1,7 @@
+kommunikation med switchen (REST API)
+
+ta emot dictionaries från netflow
+
+QoS - när ska något hända och vad ska hända.
+t.ex ACL som blockerar IP address när den gör något fel
+
