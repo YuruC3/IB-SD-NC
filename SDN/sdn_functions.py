@@ -91,7 +91,11 @@ def handle_cos_traffic(source_ip, classofservice):
         block_ip_on_switch(source_ip)
     elif classofservice == 5:  
         apply_qos_to_ip(source_ip)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 3a125b03a0ed59862aa4726e39d141638b0a7dca
 
 #   ⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ 
 #⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ 
