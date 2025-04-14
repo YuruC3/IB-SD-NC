@@ -35,16 +35,55 @@ s.send(spkt)
 # DATABASe
 
 # Prepare what to send
-toSend = NetFlowTable(srcIPAddr=X1, destIPAddr=X2, srcPort=X3, \
-                      destPort=X4, layerThreeProto=X5, \
-                      classOfService=X6, inpInterface=X7)
+        tmpDbEntry = data(
+            IPV4_SRC_ADDR=inEntry["IPV4_SRC_ADDR"],
+            IPV4_DST_ADDR=inEntry["IPV4_DST_ADDR"],
+            NEXT_HOP=inEntry["NEXT_HOP"],
+            INPUT=inEntry["INPUT"],
+            OUTPUT=inEntry["OUTPUT"],
+            IN_PACKETS=inEntry["IN_PACKETS"],
+            IN_OCTETS=inEntry["IN_OCTETS"],
+            FIRST_SWITCHED=inEntry["FIRST_SWITCHED"],
+            LAST_SWITCHED=inEntry["LAST_SWITCHED"],
+            SRC_PORT=inEntry["SRC_PORT"],
+            DST_PORT=inEntry["DST_PORT"],
+            TCP_FLAGS=inEntry["TCP_FLAGS"],
+            PROTO=inEntry["PROTO"],
+            TOS=inEntry["TOS"],
+            SRC_AS=inEntry["SRC_AS"],
+            DST_AS=inEntry["DST_AS"],
+            SRC_MASK=inEntry["SRC_MASK"],
+            DST_MASK=inEntry["DST_MASK"],
+            DATE=date.today()
+            )
                       
 # Add at the beggining to setup db connection                      
-engine = create_engine("sqlitmariadb+mariadbconnector://USER:PWD!@127.0.0.1:3306/DB_NAME")
-SQLModel.metadata.create_all(engine)
+# DB conf
+DB_HOST = "192.168.1.63"
+DB_PORT = 3306
+DB_USER = "root"
+DB_PWD = "221411"
+DATABSE_NAME = "Netflow_Data"
+
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PWD}@{DB_HOST}:{DB_PORT}/{DATABSE_NAME}"
+
+# Init db engine
+engine = create_engine(DATABASE_URL)
+
+# read bellow
+def InsertDataToMariaDB(inpData: data):
+    with Session(engine) as session:
+        session.add(inpData)
+        if session.commit():
+            return 0
+        else:
+            return 1
+        
+
 
 
 # Send to DB
-with Session(engine) as session:
-    session.add(toSend)
-    session.commit()                      
+InsertDataToMariaDB(tmpDbEntry)
+
+# Clear tmpDbEntry
+tmpDbEntry = data()
