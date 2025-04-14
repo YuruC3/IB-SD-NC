@@ -1,4 +1,4 @@
-from netflowsript import *
+from netflowscript import *
 from sdn_functions import *
 
 #placeholder för netflowdelen

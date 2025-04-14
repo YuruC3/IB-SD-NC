@@ -12,6 +12,16 @@ REST_BASE_URL = f'http://{SWITCH_IP}/rest/v1'
 AUTH = {"username": "admin", "password": "123"}
 VLAN_ID = 10
 
+
+session = requests.Session()
+
+#cookie
+def login_to_switch():
+    login_url = f"{REST_BASE_URL}/login"
+    response = session.post(login_url, json=AUTH, verify=False)
+   
+
+
 #QoS och IDS funktioner
 #bara exempel, lägg till mer
 def block_ip_on_switch(ip_to_block):
