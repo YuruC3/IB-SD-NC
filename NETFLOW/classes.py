@@ -3,7 +3,7 @@ from datetime import date
 from sqlmodel import Field, SQLModel
 
 # NetFlow table structure
-class NetFlowTable(SQLModel, table=True):
+class data(SQLModel, table=True):
     ID: Optional[int] = Field(default=None, primary_key=True)
     IPV4_SRC_ADDR: Annotated[str, "Source IP address"]
     IPV4_DST_ADDR: Annotated[str, "Destination IP address"]
@@ -18,7 +18,7 @@ class NetFlowTable(SQLModel, table=True):
     DST_PORT: Annotated[str, "Destination Port"]
     TCP_FLAGS: Annotated[str, "TCP flags (duh)"]
     PROTO: Annotated[str, "Layer 3 trotocol such as TCP or UDP"]
-    TOS: Optional[Annotated[istrnt, "Class of Service TOS(bytes)"]]
+    TOS: Optional[Annotated[str, "Class of Service TOS(bytes)"]]
     SRC_AS: Annotated[str, "Source ASN"]
     DST_AS: Annotated[str, "Destination ASN"]
     SRC_MASK: Annotated[str, "Source networkmask"]

@@ -1,6 +1,6 @@
 import socket
 import struct
-from datetime import timedelta
+from datetime import timedelta, date
 import netflow
 import json
 # DB
@@ -40,26 +40,26 @@ def netflowColleciton():
         tempEntry = tempEntry[22:-1]
         tempEntry = tempEntry.replace("'", '"')
         tempEntry = json.loads(tempEntry)
-        
+
         ip = int(tempEntry['IPV4_SRC_ADDR'])
-        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip)) 
+        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip))
         tempEntry['IPV4_SRC_ADDR'] = ip_address_fixed
-        
+
         ip = int(tempEntry['IPV4_DST_ADDR'])
-        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip)) 
+        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip))
         tempEntry['IPV4_DST_ADDR'] = ip_address_fixed
-        
+
         ip = int(tempEntry['NEXT_HOP'])
-        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip)) 
+        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip))
         tempEntry['NEXT_HOP'] = ip_address_fixed
-        
+
         first = int(tempEntry['FIRST_SWITCHED'])
         last = int(tempEntry['LAST_SWITCHED'])
         firstreadable = str(timedelta(milliseconds=first))
-        lastreadable = str(timedelta(milliseconds=last)) 
+        lastreadable = str(timedelta(milliseconds=last))
         tempEntry['FIRST_SWITCHED'] = firstreadable
         tempEntry['LAST_SWITCHED'] = lastreadable
-        
+
         bigDict[i] = tempEntry
         i += 1
 
@@ -86,11 +86,17 @@ def netflowColleciton():
             DST_MASK=tempEntry["DST_MASK"],
             DATE=date.today()
             )
-        
+
         # Send to DB
-        InsertDataToMariaDB(tmpDbEntry)
+        if InsertDataToMariaDB(tmpDbEntry):
+            print("0")
+        else:
+            print("1")
         tmpDbEntry = data()
 
 
-        
+
     return bigDict
+
+
+netflowColleciton()
