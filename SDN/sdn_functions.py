@@ -9,7 +9,7 @@ THRESHOLD_BYTES = 1000000
 #Ändra om det behövs
 SWITCH_IP = '192.168.1.1'
 REST_BASE_URL = f'http://{SWITCH_IP}/rest/v1'
-AUTH = ("admin", "123")
+AUTH = {"username": "admin", "password": "123"}
 VLAN_ID = 10
 
 #QoS och IDS funktioner
