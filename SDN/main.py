@@ -1,13 +1,12 @@
-from netflowscript import *
+from netflowsript import *
 from sdn_functions import *
 
 #placeholder för netflowdelen
 def netflow_data():
     print("...")
 
-
 #loop som tar in netflow data och applicerar sedan nödvändiga åtgärder på switchen
-#lägg till mer men inga konflikter
+
 while True:
     netflow_data()
     flows = netflow_data()
@@ -15,9 +14,8 @@ while True:
         #översätter från bytes till IP
         #src_ip = socket.inet_ntoa(flow.src_addr)
         #dest_ip = socket.inet_ntoa(flow.dst_addr)
-        #tos = typeofservice
 
-        src_ip = flow["IPV4_SRC_ADDR"]
+        source_ip = flow["IPV4_SRC_ADDR"]
         dest_ip = flow["IPV4_DST_ADDR"]
         classofservice = ["TOS"]
         byte_count = flow["IN_PACKETS"] * flow["IN_OCTETS"]
@@ -32,15 +30,15 @@ while True:
         input_interface = flow["INPUT"]
         output_interface = flow["OUTPUT"]
 
+#if-satser som styr switchen baserat på innehållet i flows
+        if input_interface == 1:
+            handle_sus_traffic(source_ip, dest_ip)
 
-        if flow.input_iface == 1:
-            handle_sus_traffic(src_ip, dest_ip)
-
-        if classofservice == 3:
-            handle_cos_traffic(src_ip, classofservice)
+        if classofservice == 3 or classofservice == 5:
+            handle_cos_traffic(source_ip, classofservice)
 
         if dest_ip == "172.126.100.1":
-            handle_sus_traffic(src_ip, dest_ip)
+            handle_sus_traffic(source_ip, dest_ip)
 
         if byte_count > THRESHOLD_BYTES:
-            handle_heavy_traffic(src_ip, byte_count)
+            handle_heavy_traffic(source_ip, byte_count)

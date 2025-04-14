@@ -59,17 +59,21 @@ def apply_qos_to_ip(limit_ip):
         print(f"Failed to apply QoS policy (HTTP {r.status_code}). Response: {r.text}")
 
 
-def handle_heavy_traffic(src_ip, byte_count):
-    print(f"[DETECTION] Heavy traffic detected from {src_ip} ({byte_count} bytes).")
-    block_ip_on_switch(src_ip)
-    apply_qos_to_ip(src_ip)
+def handle_heavy_traffic(source_ip, byte_count):
+    print(f"[DETECTION] Heavy traffic detected from {source_ip} ({byte_count} bytes).")
+    block_ip_on_switch(source_ip)
+    apply_qos_to_ip(source_ip)
 
 
 #kan användas för att blockera en ip som försöker att kommunicera med en annan specifik address
-def handle_sus_traffic(src_ip, dest_ip):
+def handle_sus_traffic(source_ip, dest_ip):
     print("...")
 
 
 #kan användas för att blockera en viss typ av service som inte är tillåten på nätverket (t.ex video)
-def handle_cos_traffic(src_ip, tos):
-    print("...")
+def handle_cos_traffic(source_ip, classofservice):
+    if classofservice == 3:     
+        block_ip_on_switch(source_ip)
+    elif classofservice == 5:  
+        apply_qos_to_ip(source_ip)
+    
