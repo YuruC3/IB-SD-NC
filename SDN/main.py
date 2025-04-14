@@ -17,7 +17,7 @@ while True:
 
         source_ip = flow["IPV4_SRC_ADDR"]
         dest_ip = flow["IPV4_DST_ADDR"]
-        classofservice = ["TOS"]
+        typeofservice = ["TOS"]
         byte_count = flow["IN_PACKETS"] * flow["IN_OCTETS"]
         first_switched = flow["FIRST_SWITCHED"]
         last_switched = flow["LAST_SWITCHED"]
@@ -34,8 +34,8 @@ while True:
         if input_interface == 1:
             handle_sus_traffic(source_ip, dest_ip)
 
-        if classofservice == 3 or classofservice == 5:
-            handle_cos_traffic(source_ip, classofservice)
+        if typeofservice == 3 or typeofservice == 5:
+            handle_tos_traffic(source_ip, typeofservice)
 
         if dest_ip == "172.126.100.1":
             handle_sus_traffic(source_ip, dest_ip)

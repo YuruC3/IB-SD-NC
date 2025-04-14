@@ -86,7 +86,7 @@ def handle_sus_traffic(source_ip, dest_ip):
 
 
 #kan användas för att blockera en viss typ av service som inte är tillåten på nätverket (t.ex video)
-def handle_cos_traffic(source_ip, classofservice):
+def handle_tos_traffic(source_ip, classofservice):
     if classofservice == 3:     
         block_ip_on_switch(source_ip)
     elif classofservice == 5:  
