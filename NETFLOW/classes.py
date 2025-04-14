@@ -1,5 +1,5 @@
 from typing import Optional, Annotated
-
+from datetime import date
 from sqlmodel import Field, SQLModel
 
 # NetFlow table structure
