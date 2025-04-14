@@ -17,8 +17,16 @@ def netflowColleciton():
         tempEntry = tempEntry.replace("'", '"')
         tempEntry = json.loads(tempEntry)
         
-        ip = int(tempEntry['srcaddr'])
-        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip))  
+        ip = int(tempEntry['IPV4_SRC_ADDR'])
+        ip_address_fixed = socket.inet_ntoa(struct.pack('!I', ip)) 
+        tempEntry['IPV4_SRC_ADDR'] = ip_address_fixed
+        
+        first = int(tempEntry['FIRST_SWITCHED'])
+        last = int(tempEntry['LAST_SWITCHED'])
+        firstreadable = str(timedelta(milliseconds=first))
+        lastreadable = str(timedelta(milliseconds=last)) 
+        tempEntry['FIRST_SWITCHED'] = firstreadable
+        tempEntry['LAST_SWITCHED'] = lastreadable
         
         bigDict[i] = tempEntry
         i += 1
