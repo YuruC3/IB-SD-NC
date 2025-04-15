@@ -1,4 +1,4 @@
-from netflowscript import *
+from netflowCollection import *
 from sdn_functions import *
 
 #placeholder för netflowdelen
@@ -17,7 +17,7 @@ while True:
 
         source_ip = flow["IPV4_SRC_ADDR"]
         dest_ip = flow["IPV4_DST_ADDR"]
-        typeofservice = ["TOS"]
+        typeofservice = flow["TOS"]
         byte_count = flow["IN_PACKETS"] * flow["IN_OCTETS"]
         first_switched = flow["FIRST_SWITCHED"]
         last_switched = flow["LAST_SWITCHED"]
