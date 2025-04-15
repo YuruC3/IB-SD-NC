@@ -28,7 +28,7 @@ def InsertDataToMariaDB(inpData: data):
         else:
             return 1
 
-def netflowColleciton():
+def netflowCollect():
     i=1
     bigDict = {}
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -99,4 +99,4 @@ def netflowColleciton():
     return bigDict
 
 
-netflowColleciton()
+netflowCollect()
