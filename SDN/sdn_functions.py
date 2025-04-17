@@ -12,11 +12,13 @@ REST_BASE_URL = f'http://{SWITCH_IP}/rest/v1'
 AUTH = {"username": "admin", "password": "123"}
 VLAN_ID = 10
 
+response = ""
 
 session = requests.Session()
 
 #cookie
 def login_to_switch():
+    global response
     login_url = f"{REST_BASE_URL}/login"
     response = session.post(login_url, json=AUTH, verify=False)
    

@@ -1,9 +1,6 @@
 from netflowCollection import netflowCollection
 from sdn_functions import *
 
-#placeholder för netflowdelen
-def netflow_data():
-    print("...")
 
 #loop som tar in netflow data och applicerar sedan nödvändiga åtgärder på switchen
 
@@ -11,10 +8,7 @@ while True:
     netflowCollection.netflowCollect()
     flows = netflow_data()
     for flow in flows:
-        #översätter från bytes till IP
-        #src_ip = socket.inet_ntoa(flow.src_addr)
-        #dest_ip = socket.inet_ntoa(flow.dst_addr)
-
+       
         source_ip = flow["IPV4_SRC_ADDR"]
         dest_ip = flow["IPV4_DST_ADDR"]
         typeofservice = flow["TOS"]
