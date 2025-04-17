@@ -1,6 +1,6 @@
 import socket
 import struct
-from datetime import timedelta, date
+from datetime import timedelta, datetime
 import netflow
 import json
 # DB
@@ -84,7 +84,7 @@ def netflowCollect():
             DST_AS=tempEntry["DST_AS"],
             SRC_MASK=tempEntry["SRC_MASK"],
             DST_MASK=tempEntry["DST_MASK"],
-            DATE=date.today()
+            DATE=datetime.now()
             )
 
         # Send to DB
