@@ -43,3 +43,45 @@ def extract_ips_from_header_bytes_and_replace_with_something_more_humanReadable_
     except Exception as e:
         print(f"[!] Error decoding headerBytes: {e}")
         return None, None, None, None, None
+    
+
+
+# get shit together and return
+def sflow_stream():
+    print("Starting sflowtool stream...")
+    proc = subprocess.Popen(["sflowtool", "-p", "6343"], stdout=subprocess.PIPE, text=True)
+
+    current_sample = {}
+    current_agent = "N/A"
+    current_time = datetime.now(timezone.utc).isoformat()
+
+    for line in proc.stdout:
+        line = line.strip()
+        if not line:
+            continue
+
+        if line.startswith("agent"):
+            parts = line.split(None, 1)
+            if len(parts) == 2:
+                current_agent = parts[1].strip()
+
+        elif line.startswith("localtime"):
+            parts = line.split(None, 1)
+            if len(parts) == 2:
+                current_time = parts[1].strip()
+
+        elif ": " in line:
+            key, value = line.split(": ", 1)
+            current_sample[key.strip()] = value.strip()
+
+        elif line.startswith("headerBytes"):
+            parts = line.split(None, 1)
+            if len(parts) != 2:
+                continue
+
+            ermWhatThe_Header = parts[1].strip()    
+
+
+
+for flow in sflow_stream():
+    print(flow)            
