@@ -1,12 +1,24 @@
-from netflowCollection import netflowCollection
 from sdn_functions import *
 
+flowchoice = input("Would you like to use sflow or netflow?\n S=sflow\n N=netflow\n B=both\n> ")
+if flowchoice.lower() == "s":
+    from sflowCollection import sflowCollection
+    flowCollection = sflowCollection()
+elif flowchoice.lower() == "n":
+    from netflowCollection import netflowCollection
+    flowCollection = netflowCollection()
+elif flowchoice.lower() == "b":
+    from sflowCollection import sflowCollection
+    from netflowCollection import netflowCollection
+    flowCollection = sflowCollection() + netflowCollection()
+else:
+    print("Invalid choice. Please enter 'S' for sflow or 'N' for netflow.")
+    exit()
 
 #loop som tar in netflow data och applicerar sedan nödvändiga åtgärder på switchen
 
 while True:
-    netflowCollection.netflowCollect()
-    flows = netflow_data()
+    flows = flowCollection
     for flow in flows:
        
         source_ip = flow["IPV4_SRC_ADDR"]
