@@ -16,6 +16,18 @@ response = ""
 
 session = requests.Session()
 
+# Ej klar, analyserar vad som används mest och vem som skickar mest data
+def analyze_netflow_data(data:dict):
+    i=0
+    analysis = {}
+    for key, ip in data.items():
+        if ip['src_ip'] not in analysis:
+            analysis[ip['src_ip']] = 1
+        else:
+            analysis[ip['src_ip']] += 1
+        i += 1
+    analysis["total_packets_analyzed"] = i
+    return analysis
 #cookie
 def login_to_switch():
     global response
@@ -83,9 +95,15 @@ def handle_heavy_traffic(source_ip, byte_count):
 
 
 #kan användas för att blockera en ip som försöker att kommunicera med en annan specifik address
-def handle_sus_traffic(source_ip, dest_ip):
-    print("...")
-
+'''def handle_sus_traffic(source_ip, dest_ip):
+'''    
+def handle_sus_traffic(analyze_netflow_data):
+    
+    allowed_threshold = analyze_netflow_data["total_packets_analyzed"] * 0.5
+    for ip, count in analyze_netflow_data.items():
+        if count > allowed_threshold:
+            block_ip_on_switch(ip)
+            apply_qos_to_ip(ip)
 
 #kan användas för att blockera en viss typ av service som inte är tillåten på nätverket (t.ex video)
 def handle_tos_traffic(source_ip, classofservice):
