@@ -19,7 +19,7 @@ session = requests.Session()
 # Checkar vilken port som används mest och vem som skickar mest data
 analysis = {'ports' : {}, 'ips' : {}, 'total_packets_analyzed' : 0}
 def analyze_netflow_data(analysis:dict, new_data:dict):
-    i=0
+    k=0
     for key, ip in new_data.items():
         if ip['src_ip'] not in analysis['ips']:
             analysis['ips'][ip['src_ip']] = 1
@@ -29,8 +29,11 @@ def analyze_netflow_data(analysis:dict, new_data:dict):
             analysis['ports'][ip['dst_port']] = 1
         else:
             analysis['ports'][ip['dst_port']] += 1
-        i += 1
-    analysis["total_packets_analyzed"] += i
+        k += 1
+    analysis["total_packets_analyzed"] += k
+    for keys in analysis['ips']:
+        if analysis['ips'][keys] > 0.8 * analysis["total_packets_analyzed"]:
+            handle_heavy_traffic(keys, analysis['ips'][keys])
     return analysis
 
 #cookie
