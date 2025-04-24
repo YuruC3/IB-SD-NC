@@ -1,0 +1,22 @@
+# create and add port
+sudo ovs-vsctl add-br br0
+sudo ovs-vsctl add-port br0 eth1
+
+
+# add internal port
+sudo ovs-vsctl add-port br0 int0 -- set Interface int0 type=internal
+
+
+# In script
+sudo ovs-vsctl -- --id=@sflow create sflow agent=int0 \
+    target=\"172.20.240.20:6343\" header=128 sampling=64 polling=10 \
+    -- set bridge br0 sflow=@sflow
+
+# or inline
+sudo ovs-vsctl -- --id=@sflow create sflow agent=int0 \
+    target='"172.20.240.20:6343"' header=128 sampling=64 polling=10 \
+    -- set bridge br0 sflow=@sflow
+
+
+
+sudo ovs-vsctl list sflow

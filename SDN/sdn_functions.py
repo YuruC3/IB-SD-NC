@@ -9,13 +9,38 @@ THRESHOLD_BYTES = 1000000
 #Ändra om det behövs
 SWITCH_IP = '192.168.1.1'
 REST_BASE_URL = f'http://{SWITCH_IP}/rest/v1'
-AUTH = ("admin", "123")
+AUTH = {"username": "admin", "password": "123"}
 VLAN_ID = 10
+
+response = ""
+
+session = requests.Session()
+
+# Ej klar, analyserar vad som används mest och vem som skickar mest data
+def analyze_netflow_data(data:dict):
+    i=0
+    analysis = {}
+    for key, ip in data.items():
+        if ip['src_ip'] not in analysis:
+            analysis[ip['src_ip']] = 1
+        else:
+            analysis[ip['src_ip']] += 1
+        i += 1
+    analysis["total_packets_analyzed"] = i
+    return analysis
+#cookie
+def login_to_switch():
+    global response
+    login_url = f"{REST_BASE_URL}/login"
+    response = session.post(login_url, json=AUTH, verify=False)
+   
+
 
 #QoS och IDS funktioner
 #bara exempel, lägg till mer
 def block_ip_on_switch(ip_to_block):
 
+#ACL
     acl_name = "Block_1"
     acl_rule_id = 1
 
@@ -32,6 +57,8 @@ def block_ip_on_switch(ip_to_block):
     else:
         print(f"Failed to apply ACL rule (HTTP {r.status_code}). Response: {r.text}")
 
+
+#Applying ACL to Vlan
     vlan_url = f"{REST_BASE_URL}/vlans/{VLAN_ID}"
     vlan_data = {"acl_in_cfg": {"acl_name": acl_name}}
 
@@ -42,6 +69,8 @@ def block_ip_on_switch(ip_to_block):
         print(f"Failed to apply ACL to VLAN (HTTP {r.status_code}). Response: {r.text}")
 
 
+#Apply QoS profile to IP
+#Apply Qos policy
 def apply_qos_to_ip(limit_ip):
     qos_profile = "Profile"
     print(f"[ACTION] Applying QoS profile '{qos_profile}' to IP {limit_ip}.")
@@ -59,17 +88,46 @@ def apply_qos_to_ip(limit_ip):
         print(f"Failed to apply QoS policy (HTTP {r.status_code}). Response: {r.text}")
 
 
-def handle_heavy_traffic(src_ip, byte_count):
-    print(f"[DETECTION] Heavy traffic detected from {src_ip} ({byte_count} bytes).")
-    block_ip_on_switch(src_ip)
-    apply_qos_to_ip(src_ip)
+def handle_heavy_traffic(source_ip, byte_count):
+    print(f"[DETECTION] Heavy traffic detected from {source_ip} ({byte_count} bytes).")
+    block_ip_on_switch(source_ip)
+    apply_qos_to_ip(source_ip)
 
 
 #kan användas för att blockera en ip som försöker att kommunicera med en annan specifik address
-def handle_sus_traffic(src_ip, dest_ip):
-    print("...")
-
+'''def handle_sus_traffic(source_ip, dest_ip):
+'''    
+def handle_sus_traffic(analyze_netflow_data):
+    
+    allowed_threshold = analyze_netflow_data["total_packets_analyzed"] * 0.5
+    for ip, count in analyze_netflow_data.items():
+        if count > allowed_threshold:
+            block_ip_on_switch(ip)
+            apply_qos_to_ip(ip)
 
 #kan användas för att blockera en viss typ av service som inte är tillåten på nätverket (t.ex video)
-def handle_cos_traffic(src_ip, tos):
-    print("...")
+def handle_tos_traffic(source_ip, classofservice):
+    if classofservice == 3:     
+        block_ip_on_switch(source_ip)
+    elif classofservice == 5:  
+        apply_qos_to_ip(source_ip)
+
+#   ⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ 
+#⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ 
+#⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀  ⠈⢻⣿⣿⡄⠀⠀⠀⠀ 
+#⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿    ⢿⣿⣿⣿⣄⠀⠀⠀ 
+#⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀     ⠈⠙⢿⣷⡄⠀ 
+#⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ 
+#⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⠀ 
+#⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀ 
+#⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⡇⠀⠀ 
+#⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ 
+#⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
+#⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
+#⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ 
+#⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ 
+#⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⢠⣿⣿⠀⠀⠀ 
+#⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⢸⣿⡇⠀⠀⠀ 
+#⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀ 
+#⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ 
+#⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
