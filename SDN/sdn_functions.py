@@ -16,15 +16,19 @@ response = ""
 
 session = requests.Session()
 
-# Ej klar, analyserar vad som används mest och vem som skickar mest data
+# Checkar vilken port som används mest och vem som skickar mest data
 def analyze_netflow_data(data:dict):
     i=0
-    analysis = {}
+    analysis = {'ports' : {}, 'ips' : {}}
     for key, ip in data.items():
-        if ip['src_ip'] not in analysis:
-            analysis[ip['src_ip']] = 1
+        if ip['src_ip'] not in analysis['ips']:
+            analysis['ips'][ip['src_ip']] = 1
         else:
-            analysis[ip['src_ip']] += 1
+            analysis['ips'][ip['src_ip']] += 1
+        if ip['dst_port'] not in analysis['ports']:
+            analysis['ports'][ip['dst_port']] = 1
+        else:
+            analysis['ports'][ip['dst_port']] += 1
         i += 1
     analysis["total_packets_analyzed"] = i
     return analysis
