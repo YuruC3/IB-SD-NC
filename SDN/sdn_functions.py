@@ -1,5 +1,6 @@
 import socket
 import requests
+import ansible_runner
 
 LISTEN_HOST = '0.0.0.0'
 NETFLOW_PORT = 2055
@@ -16,18 +17,41 @@ response = ""
 
 session = requests.Session()
 
-# Ej klar, analyserar vad som används mest och vem som skickar mest data
-def analyze_netflow_data(data:dict):
-    i=0
-    analysis = {}
-    for key, ip in data.items():
-        if ip['src_ip'] not in analysis:
-            analysis[ip['src_ip']] = 1
+
+# Behöver bearbetas
+# Kör playbook
+def run_ansible_playbook(playbook):
+    r = ansible_runner.run(
+        host_pattern='all',
+        playbook=f'/ansible/{playbook}',
+        inventory='hosts.ini',
+        extravars={
+            'switch_ip': SWITCH_IP,
+            'rest_base_url': REST_BASE_URL,
+            'auth': AUTH
+        }
+    )
+
+# Checkar vilken port som används mest och vem som skickar mest data
+analysis = {'ports' : {}, 'ips' : {}, 'total_packets_analyzed' : 0}
+def analyze_netflow_data(analysis:dict, new_data:dict):
+    k=0
+    for key, ip in new_data.items():
+        if ip['src_ip'] not in analysis['ips']:
+            analysis['ips'][ip['src_ip']] = 1
         else:
-            analysis[ip['src_ip']] += 1
-        i += 1
-    analysis["total_packets_analyzed"] = i
+            analysis['ips'][ip['src_ip']] += 1
+        if ip['dst_port'] not in analysis['ports']:
+            analysis['ports'][ip['dst_port']] = 1
+        else:
+            analysis['ports'][ip['dst_port']] += 1
+        k += 1
+    analysis["total_packets_analyzed"] += k
+    for keys in analysis['ips']:
+        if analysis['ips'][keys] > 0.8 * analysis["total_packets_analyzed"] or analysis['ips'][keys] > k:
+            handle_heavy_traffic(keys, analysis['ips'][keys])
     return analysis
+
 #cookie
 def login_to_switch():
     global response
