@@ -13,14 +13,22 @@ services:
       ]
     environment:
       MYSQL_ROOT_PASSWORD: cisco
-      MYSQL_DATABASE: source
-      MYSQL_USER: source_user
+      MYSQL_DATABASE: DD
+      MYSQL_USER: DD_user
       MYSQL_PASSWORD: cisco
     ports:
       - "3308:3306"
-
+    networks:
+      - DB
 
 volumes:
   mysql-source:
+
+
+
+networks:
+  DB:
+    name: DB
+    external: true
 
 

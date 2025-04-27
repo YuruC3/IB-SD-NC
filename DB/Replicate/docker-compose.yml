@@ -14,12 +14,13 @@ services:
       ]
     environment:
       MYSQL_ROOT_PASSWORD: cisco
-      MYSQL_DATABASE: replicate
-      MYSQL_USER: replicate_user
+      MYSQL_DATABASE: DD
+      MYSQL_USER: DD_user
       MYSQL_PASSWORD: cisco
     ports:
       - "3309:3306"
-
+    networks:
+      - DB
 
 volumes:
   mysql-replica:
@@ -27,68 +28,9 @@ volumes:
 
 
 
+networks:
+  DB:
+    name: DB
+    external: true
 
 
-
-
-
-
-
-
-
-
-
-
-
-  #database:
-   # image: mysql:latest #9.3.0
-    #container_name: database
-    #ports:
-   #   - "3038:3036"
-#    environment:
- #     MYSQL_ROOT_PASSWORD: cisco
-  #    MYSQL_DATABASE: database
-   #   MYSQL_USER: user
-    #  MYSQL_PASSWORD: cisco
-#    command:
- #     [
-  #      "mysqld",
-   #     "--datadir=/var/lib/mysql",
-    #    "--log-bin=bin.log",
-     #   "--server-id=1"
-      #]
-#    volumes:
- #     - ./database:/var
-  #    - ./database_conf:/etc/mysql/conf.d
-   # networks:
-    #  - db
-
-#  replicate:
- #   image: mysql:latest #9.3.0
-  #  container_name: replicate
-   # ports:
-    #  - "3039:3036"
-#    environment:
- #     MYSQL_ROOT_PASSWORD: cisco
-  #    MYSQL_DATABASE: replicate
-   #   MYSQL_USER: user
-    #  MYSQL_PASSWORD: cisco
-#    command:
- #     [
-  #      "mysqld",
-   #     "--datadir=/var/lib/mysql",
-    #    "--log-bin=bin.log",
-     #   "--server-id=2"
-      #]
-#    volumes:
- #     - ./replicate:/var
-  #    - ./replicate_conf:/etc/mysql/conf.d
-   # networks:
-    #  - db
-
-
-
-
-#networks:
- # db:
-  #  driver: bridge
