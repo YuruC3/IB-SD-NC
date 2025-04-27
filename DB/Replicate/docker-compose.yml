@@ -1,25 +1,5 @@
 
 services:
-  mysql_source:
-    image: mysql:latest
-    volumes:
-      - mysql-source:/tmp
-    command:
-      [
-        "mysqld",
-        "--datadir=/tmp/mysqldata-source",
-        "--log-bin=bin.log",
-        "--server-id=1"
-      ]
-    environment:
-      MYSQL_ROOT_PASSWORD: cisco
-      MYSQL_DATABASE: test
-      MYSQL_USER: test_user
-      MYSQL_PASSWORD: cisco
-    ports:
-      - "3308:3306"
-
-
 
   mysql_replica:
     image: mysql:latest
@@ -34,15 +14,14 @@ services:
       ]
     environment:
       MYSQL_ROOT_PASSWORD: cisco
-      MYSQL_DATABASE: test
-      MYSQL_USER: test_user
+      MYSQL_DATABASE: replicate
+      MYSQL_USER: replicate_user
       MYSQL_PASSWORD: cisco
     ports:
       - "3309:3306"
 
 
 volumes:
-  mysql-source:
   mysql-replica:
 
 
