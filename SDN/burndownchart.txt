@@ -1,6 +1,6 @@
-kommunikation med switchen (REST API)
+###kommunikation med switchen (REST API)
 
-ta emot dictionaries från netflow
+ta emot dictionaries från sFlow
 
 QoS - när ska något hända och vad ska hända.
 
