@@ -31,6 +31,11 @@ def run_ansible_playbook(playbook):
             'auth': AUTH
         }
     )
+#Check if it succeeds or fails.
+    if r.rc != 0:
+        print(f"[ERROR] Playbook {playbook} failed to run.")
+    else:
+        print(f"[SUCCESS] Playbook {playbook} ran successfully.")
 
 # Checkar vilken port som används mest och vem som skickar mest data
 analysis = {'ports' : {}, 'ips' : {}, 'total_packets_analyzed' : 0}
@@ -56,7 +61,7 @@ def analyze_netflow_data(analysis:dict, new_data:dict):
 def login_to_switch():
     global response
     login_url = f"{REST_BASE_URL}/login"
-    response = session.post(login_url, json=AUTH, verify=False)
+    response = session.post(login_url, json=AUTH, verify=False, timeout=5)
    
 
 
@@ -75,7 +80,7 @@ def block_ip_on_switch(ip_to_block):
         "protocol": "ip"
     }
 
-    r = requests.put(acl_url, json=acl_data, auth=AUTH, verify=False)
+    r = requests.put(acl_url, json=acl_data, auth=AUTH, verify=False, timeout=5)
     if r.status_code in [200, 201]:
         print(f"Success")
     else:
