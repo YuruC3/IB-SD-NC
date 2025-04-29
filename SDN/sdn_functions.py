@@ -1,6 +1,8 @@
 import socket
 import requests
-import ansible_runner
+from Ansible.sendmail import sendmail
+
+admins = ['']
 
 LISTEN_HOST = '0.0.0.0'
 NETFLOW_PORT = 2055
