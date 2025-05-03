@@ -2,7 +2,7 @@ from sdn_functions import *
 import time
 from SFLOW.sflowcollect import *
 
-analysis = {'ports' : {}, 'ips' : {}, 'total_packets_analyzed' : 0}
+analysis = {'packets' : {}, 'unique_src_ips' : {}, 'unique_dst_ports' : {}, 'total_packets_analyzed' : 0}
 
 if __name__ == "__main__":
     while True:

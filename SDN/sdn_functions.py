@@ -1,5 +1,6 @@
 import socket
 import requests
+import datetime
 from Ansible.sendmail import sendmail
 
 admins = ['']
@@ -40,23 +41,40 @@ def run_ansible_playbook(playbook):
         print(f"[SUCCESS] Playbook {playbook} ran successfully.")
 
 # Checkar vilken port som används mest och vem som skickar mest data
-analysis = {'ports' : {}, 'ips' : {}, 'total_packets_analyzed' : 0}
+analysis = {'packets' : {}, 'unique_src_ips' : {}, 'unique_dst_ports' : {}, 'total_packets_analyzed' : 0}
+
 def analyze_netflow_data(analysis:dict, new_data:dict):
-    k=0
+    temp = {}
+    current_time = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=2)))
+
+    for key, ip in analysis['packets'].items():
+        if current_time - datetime.datetime.fromisoformat(ip['timestamp']) >= datetime.timedelta(hours=2):
+            temp[key] = ip
+    for ip in temp:
+        analysis['unique_src_ips'][temp[ip]['src_ip']] -=1
+        if analysis['unique_src_ips'][temp[ip]['src_ip']] <= 0:
+            analysis['unique_src_ips'].pop(temp[ip]['src_ip'])
+        analysis['unique_dst_ports'][temp[ip]['dst_port']] -=1
+        if analysis['unique_dst_ports'][temp[ip]['dst_port']] <= 0:
+            analysis['unique_dst_ports'].pop(temp[ip]['dst_port'])
+        analysis['packets'].pop(ip)
+        print ("removed: ", ip)
+    temp.clear()
     for key, ip in new_data.items():
-        if ip['src_ip'] not in analysis['ips']:
-            analysis['ips'][ip['src_ip']] = 1
+        analysis["total_packets_analyzed"] += 1
+        analysis['packets'][analysis['total_packets_analyzed']] = ip
+        print ("added: ", ip, "to analysis")
+        if ip['src_ip'] not in analysis['unique_src_ips']:
+            analysis['unique_src_ips'][ip['src_ip']] = 1
         else:
-            analysis['ips'][ip['src_ip']] += 1
-        if ip['dst_port'] not in analysis['ports']:
-            analysis['ports'][ip['dst_port']] = 1
+            analysis['unique_src_ips'][ip['src_ip']] += 1
+        if ip['dst_port'] not in analysis['unique_dst_ports']:
+            analysis['unique_dst_ports'][ip['dst_port']] = 1
         else:
-            analysis['ports'][ip['dst_port']] += 1
-        k += 1
-    analysis["total_packets_analyzed"] += k
-    for keys in analysis['ips']:
-        if analysis['ips'][keys] > 0.8 * analysis["total_packets_analyzed"] or analysis['ips'][keys] > k:
-            handle_heavy_traffic(keys, analysis['ips'][keys])
+            analysis['unique_dst_ports'][ip['dst_port']] += 1
+    for keys in analysis['unique_src_ips']:
+        if analysis['unique_src_ips'][keys] >= 5:
+            handle_heavy_traffic(keys, analysis['unique_src_ips'][keys])
     return analysis
 
 #cookie
