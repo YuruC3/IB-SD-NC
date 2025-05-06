@@ -1,0 +1,25 @@
+---
+- name: Block IP addresses
+  hosts: ARUBA
+  gather_facts: no
+  vars:
+    blocked_ip: "0.0.0.0"  # Will be passed dynamically
+
+  tasks:
+
+    #- name: Get current ACL
+      #community.network.aruba_command:
+       # commands:
+        #  - "show running-config | include deny"
+      #register: aclOutPut
+
+    #- name: IP check
+     # set_fact:
+      #  ip_already_blocked: "{{ aclOutPut.stdout[0] is search('deny .* {{ blocked_ip }}') }}"
+
+    - name: ACL IP BLOCK
+      community.network.aruba_config:
+        lines:
+          - "deny ip host {{ blocked_ip }} any"
+        parents: "ip access-list extended BLOCK_BAD_IPS"
+      when: blocked_ip is defined

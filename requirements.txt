@@ -1,0 +1,7 @@
+# mysql-connector-python==9.2.0
+netflow==0.12.2
+sqlmodel==0.0.24
+typing==3.7.4.3
+ansible_runner==2.4.1
+ansible-pylibssh==1.2.2
+# socket

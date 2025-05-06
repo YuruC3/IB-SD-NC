@@ -1,0 +1,7 @@
+venv
+*/venv
+WorkiWorki/proj/IB-SD-NC/*/__pycache__
+WorkiWorki/proj/IB-SD-NC/*/*/__pycache__
+WorkiWorki/proj/IB-SD-NC/artifacts
+WorkiWorki/proj/IB-SD-NC/*/artifacts
+WorkiWorki/proj/IB-SD-NC/*/*/artifacts

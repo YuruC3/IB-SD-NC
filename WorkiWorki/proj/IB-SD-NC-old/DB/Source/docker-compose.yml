@@ -1,0 +1,34 @@
+
+services:
+  mysql_source:
+    image: mysql:latest
+    volumes:
+      - mysql-source:/tmp
+    command:
+      [
+        "mysqld",
+        "--datadir=/tmp/mysqldata-source",
+        "--log-bin=bin.log",
+        "--server-id=1"
+      ]
+    environment:
+      MYSQL_ROOT_PASSWORD: cisco
+      MYSQL_DATABASE: DD
+      MYSQL_USER: DD_user
+      MYSQL_PASSWORD: cisco
+    ports:
+      - "3308:3306"
+    networks:
+      - DB
+
+volumes:
+  mysql-source:
+
+
+
+networks:
+  DB:
+    name: DB
+    external: true
+
+

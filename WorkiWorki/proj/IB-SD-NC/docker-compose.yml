@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  grafana:
+    image: grafana/grafana-enterprise:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+     - '3000:3000'
+    user: '0'
+    volumes:
+      - /home/pi/grafana-storage:/var/lib/grafana
+    networks:
+      - DB
+
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 6969:8080
+    networks:
+      - DB
+
+
+networks:
+  DB:
+    external: true

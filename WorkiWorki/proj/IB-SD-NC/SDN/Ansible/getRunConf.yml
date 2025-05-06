@@ -1,0 +1,16 @@
+---
+- name: What the config
+  hosts: # Insert Ip or something
+  gather_facts: no
+
+  tasks:
+    - name: Get Running COnfig
+      aruba_command:
+        commands:
+          - "show running-config"
+      register: swithcCongif
+
+    - name: save Config
+      copy:
+        content: "{{ swithcCongif.stdout[0] }}"
+        dest: "./swithcCongif.txt"

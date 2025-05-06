@@ -1,0 +1,22 @@
+----14:58----
+(venv) pi@DancingData:~/Documents/IB-SD-NC/SDN/Ansible $ python noIpPleaseTEMP.py 
+[DEPRECATION WARNING]: community.network.aruba_command has been deprecated. 
+This collection and all content in it is unmaintained and deprecated. This 
+feature will be removed from community.network in version 6.0.0. Deprecation 
+warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
+[DEPRECATION WARNING]: community.network.aruba_config has been deprecated. This
+ collection and all content in it is unmaintained and deprecated. This feature 
+will be removed from community.network in version 6.0.0. Deprecation warnings 
+can be disabled by setting deprecation_warnings=False in ansible.cfg.
+
+PLAY [Block IP addresses] ******************************************************
+
+TASK [Get current ACL] *********************************************************
+[DEPRECATION WARNING]: community.network.aruba has been deprecated. This 
+collection and all content in it is unmaintained and deprecated. This feature 
+will be removed from community.network in version 6.0.0. Deprecation warnings 
+can be disabled by setting deprecation_warnings=False in ansible.cfg.
+fatal: [192.168.0.1]: FAILED! => {"changed": false, "msg": "Unable to decode JSON from response to exec_command('{\"command\": \"show running-config\", \"prompt\": null, \"answer\": null}'). Received 'None'.", "rc": 1}
+
+PLAY RECAP *********************************************************************
+192.168.0.1                : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0  

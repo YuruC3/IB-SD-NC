@@ -1,0 +1,9 @@
+###kommunikation med switchen (REST API)
+
+ta emot dictionaries från sFlow
+
+QoS - när ska något hända och vad ska hända.
+
+fet while True loop med en massa if - satser
+t.ex ACL som blockerar IP address när den gör något fel
+

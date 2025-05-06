@@ -1,0 +1,36 @@
+
+services:
+
+  mysql_replica:
+    image: mysql:latest
+    volumes:
+      - mysql-replica:/tmp
+    command:
+      [
+        "mysqld",
+        "--datadir=/tmp/mysqldata-replica",
+        "--log-bin=bin.log",
+        "--server-id=2"
+      ]
+    environment:
+      MYSQL_ROOT_PASSWORD: cisco
+      MYSQL_DATABASE: DD
+      MYSQL_USER: DD_user
+      MYSQL_PASSWORD: cisco
+    ports:
+      - "3309:3306"
+    networks:
+      - DB
+
+volumes:
+  mysql-replica:
+
+
+
+
+networks:
+  DB:
+    name: DB
+    external: true
+
+
